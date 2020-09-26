@@ -20,7 +20,7 @@ int Cencrypt_Encrypt(int offset, unsigned char * data, int len) {
         ret = 0xfffffffe;
     } else {
         for (int i = 0; i < len; ++i) {
-            data[i] = data[i] ^ Cencrypt_mapL(offset + i);
+            data[i] ^= Cencrypt_mapL(offset + i);
         }
         ret = len;
     }
@@ -34,7 +34,7 @@ int Cencrypt_Decrypt(int offset, unsigned char * data, int len) {
 int main(int argc, const char * argv[]) {
     if (argc != 3) {
         printf("usage: in file, out file\n");
-        return 1;
+        return 0;
     }
     FILE * fp = fopen(argv[1], "rb");
     FILE * fout = fopen(argv[2], "wb");
@@ -44,7 +44,7 @@ int main(int argc, const char * argv[]) {
         return 1;
     }
     if (fout == 0) {
-        printf("failed to open notput file\n");
+        printf("failed to open output file\n");
         return 1;
     }
 
