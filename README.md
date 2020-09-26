@@ -1,8 +1,10 @@
 # qmc-tool
 
-解密Q*音乐加密的音频文件
+解密QQ音乐加密的音频文件
 
 A program to decrypt .qmcflac, .qmcogg, etc. file.
+
+> Windows上暂时没法用，等我写个c语言版本吧
 
 ## usage
 
