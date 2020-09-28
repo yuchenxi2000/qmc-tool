@@ -4,32 +4,19 @@
 unsigned char g_p_map_space[0x100];
 
 unsigned char Cencrypt_mapL(int x) {
-    if (x >= 0) {
-        if (x > 0x7fff) {
-            x = x % 0x7fff;
-        }
-    } else {
-        x = 0;
+    if (x > 0x7fff) {
+        x = x % 0x7fff;
     }
-    return g_p_map_space[(0x13c1b + x * (x - 0x1) + x) % 0x100];
+    return g_p_map_space[(x * x + 0x13c1b) & 0xff];
 }
 
-int Cencrypt_Encrypt(int offset, unsigned char * data, int len) {
-    int ret;
-    if (offset < 0) {
-        ret = 0xfffffffe;
-    } else {
-        for (int i = 0; i < len; ++i) {
-            data[i] ^= Cencrypt_mapL(offset + i);
-        }
-        ret = len;
+void Cencrypt_Encrypt(int offset, unsigned char * data, int len) {
+    for (int i = 0; i < len; ++i) {
+        data[i] ^= Cencrypt_mapL(offset + i);
     }
-    return ret;
 }
 
-int Cencrypt_Decrypt(int offset, unsigned char * data, int len) {
-    return Cencrypt_Encrypt(offset, data, len);
-}
+#define Cencrypt_Decrypt(offset, data, len) Cencrypt_Encrypt(offset, data, len)
 
 int main(int argc, const char * argv[]) {
     if (argc != 3) {
@@ -61,11 +48,11 @@ int main(int argc, const char * argv[]) {
         fseek(fout, offset, SEEK_SET);
         fwrite(buffer, 1, read_bytes, fout);
 
-        offset += read_bytes;
-
         if (read_bytes < buffer_size) {
             break;
         }
+
+        offset += read_bytes;
     }
 
     free(buffer);
